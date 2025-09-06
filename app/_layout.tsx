@@ -1,12 +1,20 @@
-import { ClerkProvider } from "@clerk/clerk-expo";
-import { tokenCache } from "@clerk/clerk-expo/token-cache";
-import { Slot } from "expo-router";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import "../global.css";
 
+const queryClient=new QueryClient({
+ 
+});
 export default function RootLayout() {
   return (
-    <ClerkProvider tokenCache={tokenCache}>
-      <Slot />
-    </ClerkProvider>
+    <QueryClientProvider client={queryClient}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      ></Stack>
+      <StatusBar style="light" />
+    </QueryClientProvider>
   );
 }
