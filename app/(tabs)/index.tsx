@@ -5,26 +5,17 @@ import React from "react";
 import { FlatList, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../../components/Header";
-import { useRecentlyPlayed } from "../../hooks/useSpotify.js";
+import { useRecentlyPlayed, useTopArtists } from "../../hooks/useSpotify.js";
 export default function index() {
   const [fontsLoaded] = useFonts({ Nunito_400Regular });
   const { data, error, isLoading } = useRecentlyPlayed();
+  const {
+    data: topArtists,
+    error: artistError,
+    isLoading: artistLoading,
+  } = useTopArtists();
   if (!fontsLoaded) {
     return null;
-  }
-  if (error) {
-    return (
-      <View className="items-center justify-center flex-1">
-        <Text className="text-lg text-white">Failed to load data</Text>
-      </View>
-    );
-  }
-  if (isLoading) {
-    return (
-      <View className="items-center justify-center flex-1">
-        <Text className="text-lg text-white">Loading...</Text>
-      </View>
-    );
   }
   console.log(data);
   return (
@@ -59,7 +50,41 @@ export default function index() {
           ) : (
             <View className="flex items-center">
               <Text className="text-lg text-white">
-                Oops! No recently played tracks found.
+                Oops🥲! No recently played tracks found.
+              </Text>
+            </View>
+          )}
+        </View>
+        {/* my top artist */}
+        <View className="mt-8 mb-4">
+          <Text
+            className="mb-4 text-3xl font-semibold text-white"
+            style={{ fontFamily: "Nunito_400Regular" }}
+          >
+            My Top Artists
+          </Text>
+          {artistLoading ? (
+            <Text className="text-lg text-white">Loading...</Text>
+          ):
+            artistError ? (
+            <View className="flex items-center bg-red-700">
+              <Text className="text-lg text-white">Failed to load data</Text>
+            </View>
+          ): Array.isArray(topArtists) && topArtists.length > 0 ? (
+            <FlatList
+              data={topArtists}
+              keyExtractor={(item) => item.id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              ItemSeparatorComponent={() => <View className="w-5" />}
+              className="w-full"
+              renderItem={({ item }) => <SongDisplay item={{track:{name:item.name,album:{images:item.images}}}} />}
+            />
+          
+          ):(
+            <View className="flex items-center">
+              <Text className="text-lg text-white">
+                Oops🥲! No top artists found.
               </Text>
             </View>
           )}
